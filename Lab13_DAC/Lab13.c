@@ -12,6 +12,8 @@
 #include "Piano.h"
 #include "TExaS.h"
 
+volatile unsigned long note;
+
 // basic functions defined at end of startup.s
 void DisableInterrupts(void); // Disable interrupts
 void EnableInterrupts(void);  // Enable interrupts
@@ -26,6 +28,12 @@ int main(void){ // Real Lab13
   EnableInterrupts();  // enable after all initialization are done
   while(1){                
 // input from keys to select tone
+		note = Piano_In();
+		if (note != 0x0) {
+			Sound_Tone(note);
+		}
+		else
+			Sound_Off();
 
   }
             

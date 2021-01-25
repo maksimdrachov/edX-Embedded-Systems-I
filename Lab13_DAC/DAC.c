@@ -14,6 +14,15 @@
 // Input: none
 // Output: none
 void DAC_Init(void){
+	unsigned long volatile delay;
+  SYSCTL_RCGC2_R |= SYSCTL_RCGC2_GPIOB; // activate port B
+  delay = SYSCTL_RCGC2_R;    						// allow time to finish activating
+  GPIO_PORTB_AMSEL_R &= ~0x0f;      		// no analog 
+  GPIO_PORTB_PCTL_R &= ~0x0000FFFF; 		// regular function
+  GPIO_PORTB_DIR_R |= 0x0f;      				// make PB3-0 out
+  GPIO_PORTB_AFSEL_R &= ~0x0f;   				// disable alt funct on PB3-0
+  GPIO_PORTB_DEN_R |= 0x0f;      				// enable digital I/O on PB3-0
+	GPIO_PORTB_DR8R_R |= 0x0f;						// sets 8mA drive on PB3-0
 
 }
 
@@ -23,5 +32,5 @@ void DAC_Init(void){
 // Input: 4-bit data, 0 to 15 
 // Output: none
 void DAC_Out(unsigned long data){
-  
+  GPIO_PORTB_DATA_R = data;
 }

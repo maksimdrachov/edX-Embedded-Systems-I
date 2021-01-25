@@ -54,3 +54,4 @@ void TExaS_Init(enum InputPorts iport, enum OutputPorts oport, enum ScopeModes s
 // Inputs:  none
 // Outputs: none
 void TExaS_Stop(void);
+

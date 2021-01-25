@@ -123,6 +123,11 @@ char character;
 // Output: none
 void UART_OutString(unsigned char buffer[]){
 // as part of Lab 11 implement this function
+	int i = 0;
+	while (buffer[i] != 0) {
+		UART_OutChar(buffer[i]);
+		i++;
+	}
 
 }
 
@@ -140,7 +145,33 @@ unsigned char String[10];
 //10000 to "**** "  any value larger than 9999 converted to "**** "
 void UART_ConvertUDec(unsigned long n){
 // as part of Lab 11 implement this function
-  
+	int i = 0;
+	
+	if (n>9999) {
+		String[0] = '*';
+		String[1] = '*';
+		String[2] = '*';
+		String[3] = '*';
+		String[4] = ' ';
+		String[5] = 0;
+	}
+	else {
+		String[0] = n/1000 + 0x30;	// thousands digit
+		n = n%1000;									// n is now between 0 and 999
+		String[1] = n/100 + 0x30;		// hundreds digit
+		n = n%100;									// n is now between 0 and 99
+		String[2] = n/10 + 0x30;		// tens digit
+		n = n%10;
+		String[3] = n + 0x30;				// ones digit
+		String[4] = ' ';
+		String[5] = 0;
+		
+		while (i != 3 && String[i] == '0') {
+			String[i] = ' ';
+			i++;
+		}
+	}
+
 }
 
 //-----------------------UART_OutUDec-----------------------
@@ -166,6 +197,31 @@ void UART_OutUDec(unsigned long n){
 //10000 to "*.*** cm"  any value larger than 9999 converted to "*.*** cm"
 void UART_ConvertDistance(unsigned long n){
 // as part of Lab 11 implement this function
+	if (n>9999) {
+		String[0] = '*';
+		String[1] = '.';
+		String[2] = '*';
+		String[3] = '*';
+		String[4] = '*';
+		String[5] = ' ';
+		String[6] = 'c';
+		String[7] = 'm';
+		String[8] = 0;
+	}
+	else {
+		String[0] = n/1000 + 0x30;	// thousands digit
+		n = n%1000;									// n is now between 0 and 999
+		String[1] = '.';
+		String[2] = n/100 + 0x30;		// hundreds digit
+		n = n%100;									// n is now between 0 and 99
+		String[3] = n/10 + 0x30;		// tens digit
+		n = n%10;
+		String[4] = n + 0x30;				// ones digit
+		String[5] = ' ';
+		String[6] = 'c';
+		String[7] = 'm';
+		String[8] = 0;
+	}
   
 }
 

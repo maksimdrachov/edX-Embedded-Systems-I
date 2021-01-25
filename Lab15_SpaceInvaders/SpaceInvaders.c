@@ -72,6 +72,8 @@
 #include "Nokia5110.h"
 #include "Random.h"
 #include "TExaS.h"
+#include "ADC.h"
+#include "Switch.h"
 
 void DisableInterrupts(void); // Disable interrupts
 void EnableInterrupts(void);  // Enable interrupts
@@ -80,6 +82,26 @@ void Delay100ms(unsigned long count); // time delay in 0.1 seconds
 unsigned long TimerCount;
 unsigned long Semaphore;
 
+unsigned long ADCdata;    // 12-bit 0 to 4095 sample
+void SysTick_Init(unsigned long period);
+void SysTick_Handler(void);
+
+int Switch;
+
+int ShipX;
+int map(int x, int in_min, int in_max, int out_min, int out_max);
+
+int FlagLaser = 0;
+int LaserCoord[] = {42,30};
+
+int LaserX = 0;
+int LaserY = 0;
+
+int Alien30X[] = {0,17,34,51};
+int Alien30Y = 10;
+int Alien30Alive[] = {1,1,1,1};
+int AlienMove = 0x0;
+int Alien30Explosion[] = {0,0,0,0};
 
 // *************************** Images ***************************
 // enemy ship that starts at the top of the screen (arms/mouth closed)
@@ -324,37 +346,128 @@ const unsigned char Laser1[] = {
 
 
 int main(void){
+	int i;
   TExaS_Init(SSI0_Real_Nokia5110_Scope);  // set system clock to 80 MHz
-  Random_Init(1);
-  Nokia5110_Init();
-  Nokia5110_ClearBuffer();
-	Nokia5110_DisplayBuffer();      // draw buffer
+//  Random_Init(1);
+//  Nokia5110_Init();
+//  Nokia5110_ClearBuffer();
+//	Nokia5110_DisplayBuffer();      // draw buffer
 
-  Nokia5110_PrintBMP(32, 47, PlayerShip0, 0); // player ship middle bottom
-  Nokia5110_PrintBMP(33, 47 - PLAYERH, Bunker0, 0);
+//  Nokia5110_PrintBMP(32, 47, PlayerShip0, 0); // player ship middle bottom
+//  Nokia5110_PrintBMP(33, 47 - PLAYERH, Bunker0, 0);
 
-  Nokia5110_PrintBMP(0, ENEMY10H - 1, SmallEnemy10PointA, 0);
-  Nokia5110_PrintBMP(16, ENEMY10H - 1, SmallEnemy20PointA, 0);
-  Nokia5110_PrintBMP(32, ENEMY10H - 1, SmallEnemy20PointA, 0);
-  Nokia5110_PrintBMP(48, ENEMY10H - 1, SmallEnemy30PointA, 0);
-  Nokia5110_PrintBMP(64, ENEMY10H - 1, SmallEnemy30PointA, 0);
-  Nokia5110_DisplayBuffer();     // draw buffer
+//  Nokia5110_PrintBMP(0, ENEMY10H - 1, SmallEnemy10PointA, 0);
+//  Nokia5110_PrintBMP(16, ENEMY10H - 1, SmallEnemy20PointA, 0);
+//  Nokia5110_PrintBMP(32, ENEMY10H - 1, SmallEnemy20PointA, 0);
+//  Nokia5110_PrintBMP(48, ENEMY10H - 1, SmallEnemy30PointA, 0);
+//  Nokia5110_PrintBMP(64, ENEMY10H - 1, SmallEnemy30PointA, 0);
+//  Nokia5110_DisplayBuffer();     // draw buffer
 
-  Delay100ms(50);              // delay 5 sec at 50 MHz
+//  Delay100ms(5);              // delay 5 sec at 50 MHz
 
 
-  Nokia5110_Clear();
-  Nokia5110_SetCursor(1, 1);
-  Nokia5110_OutString("GAME OVER");
-  Nokia5110_SetCursor(1, 2);
-  Nokia5110_OutString("Nice try,");
-  Nokia5110_SetCursor(1, 3);
-  Nokia5110_OutString("Earthling!");
-  Nokia5110_SetCursor(2, 4);
-  Nokia5110_OutUDec(1234);
+//  Nokia5110_Clear();
+//  Nokia5110_SetCursor(1, 1);
+//  Nokia5110_OutString("GAME OVER");
+//  Nokia5110_SetCursor(1, 2);
+//  Nokia5110_OutString("Nice try,");
+//  Nokia5110_SetCursor(1, 3);
+//  Nokia5110_OutString("Earthling!");
+//  Nokia5110_SetCursor(2, 4);
+//  Nokia5110_OutUDec(1234);
+	ADC0_Init();
+	Switch_Init();
+	Nokia5110_Init();
+	Nokia5110_ClearBuffer();
+	Nokia5110_DisplayBuffer();
+	SysTick_Init(0x1E8480);
+	EnableInterrupts();
+
   while(1){
+		
+		//Player ship
+		ShipX = map(ADCdata,0,4095,0,66);
+		Nokia5110_Clear();
+		Nokia5110_ClearBuffer();
+		Nokia5110_PrintBMP(ShipX, 47, PlayerShip0, 0);
+		
+		
+		//Player bullets
+		if (FlagLaser > 0) {
+			Nokia5110_PrintBMP(LaserX, LaserY, Laser0, 0);
+		}
+		
+		//Aliens
+		for (i = 0; i<=3; i++) {
+			if (Alien30Alive[i] == 0x1) {
+				if ((AlienMove & 0x04) == 0x04) {
+					Nokia5110_PrintBMP(Alien30X[i], Alien30Y, SmallEnemy30PointA, 0);
+				}
+				else {
+					Nokia5110_PrintBMP(Alien30X[i], Alien30Y, SmallEnemy30PointB, 0);
+				}
+			} 	
+		}
+		
+		for (i = 0; i<=3; i++) {
+			if (Alien30Explosion[i] % 2 == 0) {
+				Nokia5110_PrintBMP(Alien30X[i], Alien30Y, BigExplosion0, 0);
+				Alien30Explosion[i]--;
+			if (Alien30Explosion[i] % 2 == 1) {
+				Nokia5110_PrintBMP(Alien30X[i], Alien30Y, BigExplosion1, 0);
+				Alien30Explosion[i]--;
+			}
+				
+			} 	
+		}
+	
+		Nokia5110_DisplayBuffer();     // draw buffer
+		
   }
 
+}
+
+// Initialize SysTick interrupts to trigger at 40 Hz, 25 ms
+void SysTick_Init(unsigned long period){
+  NVIC_ST_CTRL_R = 0;         // disable SysTick during setup
+  NVIC_ST_RELOAD_R = period-1;// reload value
+  NVIC_ST_CURRENT_R = 0;      // any write to current clears it
+  NVIC_SYS_PRI3_R = (NVIC_SYS_PRI3_R&0x00FFFFFF)|0x40000000; // priority 2
+                              // enable SysTick with core clock and interrupts
+  NVIC_ST_CTRL_R = 0x07;
+  EnableInterrupts();
+
+}
+// executes every 25 ms, collects a sample, converts and stores in mailbox
+void SysTick_Handler(void){ 
+	int i;
+	ADCdata = ADC0_In();
+	Switch = Switch_In();
+	
+	// Laser movement
+	if (FlagLaser > 0) {
+		LaserY--;
+		if (LaserY < 0) {
+			FlagLaser--;
+		}
+	}
+	
+	// Alien movement
+	AlienMove++;
+//	if (AlienAlive > 0) {
+//		;	// MOVE ALIEN
+//	}
+	
+	// Kill Alien detection
+	if (LaserY<10) {
+		for (i = 0; i<=3; i++) {
+			if (Alien30X[i]+3 <= LaserX && LaserX <= Alien30X[i]+13) {
+				Alien30Alive[i] = 0;
+				Alien30Explosion[i] = 20;
+			}
+		}
+	}
+	
 }
 
 
@@ -392,3 +505,9 @@ void Delay100ms(unsigned long count){unsigned long volatile time;
     count--;
   }
 }
+
+int map(int x, int in_min, int in_max, int out_min, int out_max)
+{
+  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+}
+

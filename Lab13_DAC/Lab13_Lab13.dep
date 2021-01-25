@@ -1,0 +1,26 @@
+Dependencies for Project 'Lab13', Target 'Lab13': (DO NOT MODIFY !)
+F (.\startup.s)(0x57018D78)(--cpu Cortex-M4 --pd "__EVAL SETA 1" -g --apcs=interwork -I C:\Keil\ARM\RV31\INC-I C:\Keil\ARM\CMSIS\Include-I C:\Keil\ARM\Inc\Luminary--list .\startup.lst --xref -o .\startup.o --depend .\startup.d)
+F (.\Lab13.c)(0x60085B7B)(-c --cpu Cortex-M4 -D__EVAL -g -O0 --apcs=interwork --split_sections --signed_chars -I.. -I..\..\..-I C:\Keil\ARM\RV31\INC-I C:\Keil\ARM\CMSIS\Include-I C:\Keil\ARM\Inc\Luminary-Drvmdk -DPART_LM4F120H5QR-o .\lab13.o --omf_browse .\lab13.crf --depend .\lab13.d)
+I (..//tm4c123gh6pm.h)(0x51D45492)
+I (Sound.h)(0x54A116EE)
+I (Piano.h)(0x54A116EE)
+I (TExaS.h)(0x569B5D3C)
+F (.\Sound.c)(0x600AFA0F)(-c --cpu Cortex-M4 -D__EVAL -g -O0 --apcs=interwork --split_sections --signed_chars -I.. -I..\..\..-I C:\Keil\ARM\RV31\INC-I C:\Keil\ARM\CMSIS\Include-I C:\Keil\ARM\Inc\Luminary-Drvmdk -DPART_LM4F120H5QR-o .\sound.o --omf_browse .\sound.crf --depend .\sound.d)
+I (Sound.h)(0x54A116EE)
+I (DAC.h)(0x53216A0E)
+I (..//tm4c123gh6pm.h)(0x51D45492)
+F (.\DAC.c)(0x60085E8B)(-c --cpu Cortex-M4 -D__EVAL -g -O0 --apcs=interwork --split_sections --signed_chars -I.. -I..\..\..-I C:\Keil\ARM\RV31\INC-I C:\Keil\ARM\CMSIS\Include-I C:\Keil\ARM\Inc\Luminary-Drvmdk -DPART_LM4F120H5QR-o .\dac.o --omf_browse .\dac.crf --depend .\dac.d)
+I (DAC.h)(0x53216A0E)
+I (..//tm4c123gh6pm.h)(0x51D45492)
+F (.\Piano.c)(0x600AFC14)(-c --cpu Cortex-M4 -D__EVAL -g -O0 --apcs=interwork --split_sections --signed_chars -I.. -I..\..\..-I C:\Keil\ARM\RV31\INC-I C:\Keil\ARM\CMSIS\Include-I C:\Keil\ARM\Inc\Luminary-Drvmdk -DPART_LM4F120H5QR-o .\piano.o --omf_browse .\piano.crf --depend .\piano.d)
+I (Piano.h)(0x54A116EE)
+I (..//tm4c123gh6pm.h)(0x51D45492)
+F (.\DAC_Test.c)(0x600804BF)(-c --cpu Cortex-M4 -D__EVAL -g -O0 --apcs=interwork --split_sections --signed_chars -I.. -I..\..\..-I C:\Keil\ARM\RV31\INC-I C:\Keil\ARM\CMSIS\Include-I C:\Keil\ARM\Inc\Luminary-Drvmdk -DPART_LM4F120H5QR-o .\dac_test.o --omf_browse .\dac_test.crf --depend .\dac_test.d)
+I (..//tm4c123gh6pm.h)(0x51D45492)
+I (DAC.h)(0x53216A0E)
+I (TExaS.h)(0x569B5D3C)
+F (.\Piano_Test.c)(0x600853DA)(-c --cpu Cortex-M4 -D__EVAL -g -O0 --apcs=interwork --split_sections --signed_chars -I.. -I..\..\..-I C:\Keil\ARM\RV31\INC-I C:\Keil\ARM\CMSIS\Include-I C:\Keil\ARM\Inc\Luminary-Drvmdk -DPART_LM4F120H5QR-o .\piano_test.o --omf_browse .\piano_test.crf --depend .\piano_test.d)
+I (..//tm4c123gh6pm.h)(0x51D45492)
+I (Piano.h)(0x54A116EE)
+I (TExaS.h)(0x569B5D3C)
+F (.\texas.o)(0x56F45EB0)()
